@@ -28,7 +28,7 @@ jobs:
           mvn -B package --file pom.xml
 
       - name: Build Docker Image
-        uses: actions/build-push-action@v2 # uses the build-push-action to build the docker image
+        uses: docker/build-push-action@v2 # uses the build-push-action to build the docker image
         with:
           context: . # the context of the docker image . means the root of the project
           dockerfile: Dockerfile # the dockerfile to use
