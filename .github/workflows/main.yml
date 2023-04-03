@@ -26,3 +26,24 @@ jobs:
         run: |
           mvn clean
           mvn -B package --file pom.xml
+
+      - name: Build Docker Image
+        uses: actions/build-push-action@v2 # uses the build-push-action to build the docker image
+        with:
+          context: . # the context of the docker image . means the root of the project
+          dockerfile: Dockerfile # the dockerfile to use
+          push: false
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/spring-pipeline-actions:$(date-'%Y-%m-%d%H-%M-%S') # the tag of the docker image
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1 # uses the docker login action to login to docker hub
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }} # the username of the docker hub
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} # the password of the docker hub
+
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2 # uses the docker build-push-action to push the docker image to docker hub
+        with:
+          context: .
+          dockerfile: Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/spring-pipeline-actions:$(date-'%Y-%m-%d%H-%M-%S')
