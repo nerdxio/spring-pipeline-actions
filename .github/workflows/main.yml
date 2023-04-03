@@ -1,0 +1,28 @@
+name: Build and Deploy
+# Controls when the action will run. Triggers the workflow on push
+on:
+  push:
+    branches:
+      - main
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest # the type of machine to run on
+    steps:
+      - name: Checkout code # checks out a copy of your repository on the ubuntu-latest machine "copy of the repo to the runner"
+        uses: actions/checkout@v3 # uses the built-in checkout action you can git from github actions site
+
+      - name: Setup JDK 17 # sets up the JDK version 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'corretto' # distribution of the JDK
+
+      - name: Unit Tests # runs the unit tests
+        run: mvn -B test --file pom.xml # runs the maven command to run the unit tests
+
+      - name: Build  # builds the project
+        run: |
+          mvn clean
+          mvn -B package --file pom.xml
